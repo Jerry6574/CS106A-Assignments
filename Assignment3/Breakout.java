@@ -15,6 +15,8 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import com.sun.org.apache.xpath.internal.operations.And;
+
 public class Breakout extends GraphicsProgram {
 
 /** Width and height of application window in pixels */
@@ -49,14 +51,14 @@ public class Breakout extends GraphicsProgram {
 	private static final int BRICK_HEIGHT = 8;
 
 /** Radius of the ball in pixels */
-	private static final int BALL_RADIUS = 5;
+	private static final int BALL_RADIUS = 10;
 	private static final int BALL_DIAMETER = 2 * BALL_RADIUS;
 
 /** Offset of the top brick row from the top */
 	private static final int BRICK_Y_OFFSET = 70;
 
 /** Number of turns */
-	private static final int NTURNS = 10;
+	private static final int NTURNS = 3;
 	
 	private static final int PADDLE_Y = HEIGHT - PADDLE_Y_OFFSET;
 
@@ -81,7 +83,11 @@ public class Breakout extends GraphicsProgram {
 	
 	private Color brickColors[] = {Color.RED, Color.ORANGE, Color.YELLOW, 
 			   					   Color.GREEN, Color.CYAN};
-
+	private boolean hitRightWall;
+	private boolean hitLeftWall;
+	private boolean hitTopWall;
+	private boolean hitBottomWall;
+	
 /* Method: run() */
 /** Runs the Breakout program. */
 	public void run() {
@@ -134,16 +140,15 @@ public class Breakout extends GraphicsProgram {
 		
 		while(brickCount != 0) {
 			GObject collider = getCollidingObject();
-			
 			// reverse vx when ball hits left or right walls
-			boolean hitRightWall = ball.getX() + BALL_DIAMETER >= WIDTH;
-			boolean hitLeftWall = ball.getX() <= 0;
+			updateWallStatus();
+			
 			if(hitRightWall || hitLeftWall) {
 				vx = -vx;
 			}
 			
 			// reverse vy when ball hits top wall, paddle or brick
-			boolean hitTopWall = ball.getY() <= 10;
+			
 			boolean isBrickOrPaddle = collider != null;
 			boolean isBrick = isBrickOrPaddle && collider != paddle;
 			if(hitTopWall || isBrickOrPaddle) {
@@ -169,7 +174,7 @@ public class Breakout extends GraphicsProgram {
 					displayScore();
 				}
 			} 
-			boolean hitBottomWall = ball.getY() + BALL_DIAMETER >= HEIGHT;
+		
 			if(hitBottomWall) {
 				curTurnCount--;
 				displayTurnCounts();
@@ -182,15 +187,17 @@ public class Breakout extends GraphicsProgram {
 			}
 			// move ball out of reach of paddle, left or right wall, 
 			// avoid ball gluing effect
+			
 			if(collider == paddle) {
 				for(int i = 0; i < 10; i++) {
 					ball.move(vx, vy);
 					pause(delay);
 				}
-			} else if (hitRightWall || hitLeftWall){
-				for(int i = 0; i < 6; i++) {
+			} else if (hitRightWall || hitLeftWall || hitTopWall){
+				while(hitRightWall || hitLeftWall || hitTopWall) {
 					ball.move(vx, vy);
 					pause(delay);
+					updateWallStatus();
 				}
 			} else {
 				ball.move(vx, vy);
@@ -201,6 +208,7 @@ public class Breakout extends GraphicsProgram {
 		if(brickCount == 0) {
 			displayGameWon();
 		}
+		
 		
 	}
 	
@@ -265,6 +273,13 @@ public class Breakout extends GraphicsProgram {
 		if(mouseX <= WIDTH - PADDLE_WIDTH) {
 			paddle.setLocation(mouseX, PADDLE_Y);
 		}
+	}
+	
+	private void updateWallStatus() {
+		hitRightWall = ball.getX() + BALL_DIAMETER >= WIDTH;
+		hitLeftWall = ball.getX() <= 0;
+		hitTopWall = ball.getY() <= 10;
+		hitBottomWall = ball.getY() + BALL_DIAMETER >= HEIGHT;
 	}
 	
 }
