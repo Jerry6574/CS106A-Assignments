@@ -8,8 +8,10 @@
 import acm.graphics.*;
 import acm.program.*;
 import acm.util.*;
+import acmx.export.java.io.FileReader;
 
 import java.awt.*;
+import java.io.BufferedReader;
 
 import com.sun.org.apache.xpath.internal.operations.And;
 
@@ -85,5 +87,23 @@ public class Hangman extends ConsoleProgram {
   
     	println(guessStatus);
     	displayStatus();
+    }
+    
+    private String readSecretWord(String path) {
+    	BufferedReader lexicon = new BufferedReader(new FileReader(path));
+    	
+    	try {
+        	while(true) {
+        		String line = lexicon.readLine();
+        		if(line == null) {
+        			break;
+        		}
+        		println(line);
+        	}
+        	lexicon.close();
+    	} catch (Exception e) {
+			// TODO: handle exception
+		}
+
     }
 }
