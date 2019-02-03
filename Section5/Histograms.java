@@ -56,7 +56,6 @@ public class Histograms extends ConsoleProgram{
 		} catch(IOException ex){
 			println("Nice try punk. That file doesn't exist. ");
 		}
-		
     	return rd;
     }
 }
