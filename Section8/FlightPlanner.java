@@ -75,32 +75,34 @@ public class FlightPlanner extends ConsoleProgram {
     }
     
     private void printDestinations(String city) {
-    	for(String destination: cityToDestinations.get(city)) {
-    		println(" " + destination);
+    	if(cityToDestinations.containsKey(city)) {
+        	println("From " + city + " you can fly directly to: ");
+           	for(String destination: cityToDestinations.get(city)) {
+        		println(" " + destination);
+        	}
+        	print("Where do you want to go from " + city + " ? ");
+    	} else {
+    		println("You can't get to that city by a direct flight");
     	}
-
     }
     
     private void planTrip() {
-    	while(true) {
-        	String startCity = readLine("Enter the starting city: ");
-        	if(cityToDestinations.containsKey(startCity)) {
-            	println("From " + startCity + " you can fly directly to: ");
-            	printDestinations(startCity);
-            	println("Where do you want to go from " + startCity + " ?");
-        	} else {
-        		println("Please enter a valid city. ");
-        	}
-
-    	}
-
+    	String startCity = readLine("Enter the starting city: ");
+    	String nextCity = "";
+    	ArrayList<String> route = new ArrayList<>();
     	
-//    	String nextCity = "";
-//    	
-//    	while(!nextCity.equals(startCity)) {
-//    		
-//    	}
+		printDestinations(startCity);
+		nextCity = readLine();
+		route.add(startCity);
+    	
+    	while(!startCity.equals(nextCity)) {
+    		
+			printDestinations(nextCity);
+			nextCity = readLine();
+			route.add(nextCity);
+    	}
+		for(String city: route) {
+			print(city + " -> ");
+		}
     }
-    
-    
 }
