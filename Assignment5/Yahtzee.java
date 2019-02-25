@@ -8,10 +8,12 @@ import acm.io.*;
 import acm.program.*;
 import acm.util.*;
 
+
 public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	
 	public static void main(String[] args) {
 		new Yahtzee().start(args);
+		
 	}
 	
 	public void run() {
@@ -26,7 +28,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 
 	private void playGame() {
-		/* You fill this in */
+		int[] dice = {1, 2, 3, 4, 6};
+		display.displayDice(dice);
 	}
 		
 /* Private instance variables */
@@ -34,5 +37,5 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private String[] playerNames;
 	private YahtzeeDisplay display;
 	private RandomGenerator rgen = new RandomGenerator();
-
+	
 }

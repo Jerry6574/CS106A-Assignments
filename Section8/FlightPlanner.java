@@ -20,7 +20,8 @@ public class FlightPlanner extends ConsoleProgram {
 	
     public void run() {
     	printWelcomeMsg();
-    	planTrip();
+    	planTrip2();
+//    	planTrip();
     }
     
     private BufferedReader openFile(String filename){
@@ -90,13 +91,12 @@ public class FlightPlanner extends ConsoleProgram {
     	String startCity = readLine("Enter the starting city: ");
     	String nextCity = "";
     	ArrayList<String> route = new ArrayList<>();
-    	
+ 	
 		printDestinations(startCity);
 		nextCity = readLine();
 		route.add(startCity);
     	
     	while(!startCity.equals(nextCity)) {
-    		
 			printDestinations(nextCity);
 			nextCity = readLine();
 			route.add(nextCity);
@@ -104,5 +104,39 @@ public class FlightPlanner extends ConsoleProgram {
 		for(String city: route) {
 			print(city + " -> ");
 		}
+		print(startCity);
+    }
+    
+    private void planTrip2() {
+    	String startCity = "";
+    	String nextCity = "";
+    	ArrayList<String> route = new ArrayList<>();
+    	
+    	while(true) {
+    		if(startCity.equals("")) {
+    			startCity = readLine("Enter the starting city: ");
+    			
+    			if(cityToDestinations.containsKey(startCity)) {
+    				printDestinations(startCity);
+    				nextCity = readLine();
+    			} else {
+    				print("You can't get to that city by a direct flight. ");
+    			}
+    			
+    			route.add(nextCity);
+    			
+    		} else if(!startCity.equals("") && !startCity.equals(nextCity)) {
+    			printDestinations(nextCity);
+    			nextCity = readLine();
+    			route.add(nextCity);
+    			
+    			if(cityToDestinations.containsKey(startCity)) {
+    				printDestinations(nextCity);
+    				nextCity = readLine();
+    			} else {
+    				print("You can't get to that city by a direct flight. ");
+    			}
+    		}
+    	}
     }
 }
