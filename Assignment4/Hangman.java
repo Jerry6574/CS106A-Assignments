@@ -5,105 +5,109 @@
  * Assignment #4.
  */
 
-import acm.graphics.*;
 import acm.program.*;
 import acm.util.*;
-import acmx.export.java.io.FileReader;
 
-import java.awt.*;
-import java.io.BufferedReader;
-
-import com.sun.org.apache.xpath.internal.operations.And;
 
 public class Hangman extends ConsoleProgram {
-	private String secretWord = "COMPUTER";
-	private String guessedWord = "";
+	private String secretWord;
+	private String partiallyGuessedWord;
+	private int guessCount;
+	private HangmanCanvas canvas;
 	
-	private int guesses = 8;
+
+	public void init() {
+		secretWord = getSecretWord();
+		guessCount = 8;
+		partiallyGuessedWord = "";
+		for(int i = 0; i < secretWord.length(); i++) {
+			partiallyGuessedWord += "-";
+		}
+		
+		canvas = new HangmanCanvas();
+		add(canvas);
+
+		canvas.reset();
+		canvas.displayWord(partiallyGuessedWord);
+	}
 	
     public void run() {
+    	// cheat mode
+//    	println("Secret word is " + secretWord);
+    	
     	println("Welcome to Hangman!");
-    	
-    	for(int i = 0; i < secretWord.length(); i++) {
-    		guessedWord += "-";
-    	}
-    	
     	displayStatus();
-    	while(guesses != 0 && guessedWord.contains("-")) {
-    		makeGuess();
-    		
+    	canvas.displayWord(partiallyGuessedWord);
+    	
+    	while(!partiallyGuessedWord.equals(secretWord) && guessCount != 0) {
+    		enterLetter();
+    		displayStatus();
+    		canvas.displayWord(partiallyGuessedWord);
     	}
 	}
     
-    private void displayStatus() {
-    	String wordMsg = "The word now looks like this: ";
-    	String wordStatus = wordMsg + guessedWord;
+    private String getSecretWord() {
+    	RandomGenerator rgen = new RandomGenerator();
+    	HangmanLexicon lexicon = new HangmanLexicon();
     	
-    	if(guesses > 1 && guessedWord.contains("-")) {
-        	String guessesStatus = "You have " + guesses + " guesses left. ";
-        	println(wordStatus);
-        	println(guessesStatus);
-        	print("You guess: ");
-    	} else if(guesses == 1) {
-    		String guessesStatus = "You have only one guess left. ";
-        	println(guessesStatus);
-        	print("You guess: ");
-    	} else if(guesses == 0) {
+    	int randomIndex = rgen.nextInt(0, lexicon.getWordCount()-1);
+    	String secretWord = lexicon.getWord(randomIndex);
+    	
+    	return secretWord;
+    }
+    
+    private void displayStatus() {
+    	// check if player lost
+    	if(guessCount == 0) {
     		println("You're completely hung. ");
     		println("The word was: " + secretWord);
     		println("You lose. ");
-    	} else {
-    		println("You guessed the word: " + secretWord);
-    		println("You win.");
-    	}
-    	
-    }
-    
-    private void makeGuess() {
-    	String guessedString = readLine();
-    	if(guessedString.length() != 1 || !Character.isLetter(guessedString.charAt(0))) {
-    		println("Your guess is illegal, please guess a single letter. ");
     		return;
     	}
-    	char guessedLetter = Character.toUpperCase(guessedString.charAt(0));
-    	StringBuilder updatedWord = new StringBuilder(guessedWord);
-    	String guessStatus = "There are no " + guessedLetter + "'s in the word.";
     	
-    	boolean guessedCorrect = false;
+    	// check if player won
+    	if(partiallyGuessedWord.equals(secretWord)) {
+    		println("You guessed the word: " + secretWord);
+    		println("You win. ");
+    		return;
+    	}
     	
-    	for(int i = 0; i < secretWord.length(); i++) {
-    		
-    		boolean correctAtI = guessedLetter == secretWord.charAt(i);
-    		if(correctAtI) {
-    			updatedWord.setCharAt(i, guessedLetter);
-    			guessStatus = "That guess is correct.";
-    			guessedCorrect = guessedCorrect || correctAtI;
-    		}
+    	println("The word now looks like this: " + partiallyGuessedWord);
+    	
+    	if(guessCount > 1) {
+    		println("You have " + guessCount + " guesses left. ");
+    	} else {
+    		println("You have only one guess left. ");
     	}
-    	guessedWord = updatedWord.toString();
-    	if(!guessedCorrect) {
-    		guesses--;
-    	}
-  
-    	println(guessStatus);
-    	displayStatus();
+    	
     }
     
-    private String readSecretWord(String path) {
-    	BufferedReader lexicon = new BufferedReader(new FileReader(path));
+    private void enterLetter() {
+    	String letterStr = readLine("Your guess: ").toUpperCase();
+    	char letterChar = letterStr.charAt(0);
     	
-    	try {
-        	while(true) {
-        		String line = lexicon.readLine();
-        		if(line == null) {
-        			break;
-        		}
-        		println(line);
-        	}
-        	lexicon.close();
-    	} catch (Exception e) {
-			// TODO: handle exception
-		}
-
+    	// check if input is legal single letter
+    	if(!(letterStr.length() == 1 && Character.isLetter(letterChar))) {
+    		println("Your guess is illegal. ");
+    		return;
+    	}
+    	
+    	if(partiallyGuessedWord.contains(letterStr)) {
+    		return;
+    	} else if(secretWord.contains(letterStr)) {
+    		StringBuilder newPartiallyGuessedWord = new StringBuilder(partiallyGuessedWord);
+    		for(int i = 0; i < secretWord.length(); i++) {
+    			if(letterChar == secretWord.charAt(i)) {
+    				newPartiallyGuessedWord.setCharAt(i, letterChar);
+    			}
+    			partiallyGuessedWord = newPartiallyGuessedWord.toString();
+    		}
+    	} else {
+    		println("There are no " + letterStr + "'s in the word. ");
+    		canvas.noteIncorrectGuess(letterChar);
+    		guessCount--;
+    	}
+    	
     }
+    
 }
