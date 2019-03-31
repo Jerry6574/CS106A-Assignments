@@ -31,6 +31,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 
 	private void playGame() {
+		// boolean array initialized to false
+		usedCategories = new boolean[nPlayers][N_SCORING_CATEGORIES];
 		for(int i = 0; i < N_SCORING_CATEGORIES; i++) {
 			for(int j = 1; j <= nPlayers; j++) {
 				playTurn(j);
@@ -39,6 +41,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 	
 	private void reroll() {
+		display.printMessage("Select the dice you wish to re-roll and click \"Roll Again\". ");
 		display.waitForPlayerToSelectDice();
 		
 		for(int i = 0; i < N_DICE; i++) {
@@ -59,13 +62,36 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 	
 	private void playTurn(int player) {
+		display.printMessage(playerNames[player - 1] + "'s turn. Click \"Roll Dice\" to roll the dice. ");
 		display.waitForPlayerToClickRoll(player);
 		
 		rollDice();
 		reroll();
 		reroll();
 		
-		int category = display.waitForPlayerToSelectCategory();
+		int category;
+		while(true) {
+			display.printMessage("Select a category for this roll. ");
+			category = display.waitForPlayerToSelectCategory();
+			int categoryIndex;
+			
+			// offset category value to category index
+			if(category <= 6) {
+				categoryIndex = category - 1;
+			} else {
+				categoryIndex = category - 3;
+			}
+			
+			// allow player to use category has not been used
+			if(!usedCategories[player - 1][categoryIndex]) {
+				usedCategories[player - 1][categoryIndex] = true;
+				break;
+			// category has been used
+			} else {
+				display.printMessage("Please select a category that has not yet been used. ");
+			}
+		}
+
 		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
 		
 		int score;
@@ -132,5 +158,6 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private String[] playerNames;
 	private YahtzeeDisplay display;
 	private RandomGenerator rgen = new RandomGenerator();
-	int[] dice = new int[N_DICE];
+	private int[] dice = new int[N_DICE];
+	private boolean[][] usedCategories;
 }
