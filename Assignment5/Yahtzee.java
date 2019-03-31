@@ -4,6 +4,8 @@
  * This program will eventually play the Yahtzee game.
  */
 
+import java.util.Locale.Category;
+
 import acm.io.*;
 import acm.program.*;
 import acm.util.*;
@@ -32,20 +34,46 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 
 	private void playGame() {
+		display.waitForPlayerToClickRoll(1);
 		
-		// generate random dice
-		int[] dice = new int[N_DICE];
+		rollDice();
+		reroll();
+		reroll();
+		
+		int category = display.waitForPlayerToSelectCategory();
+		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
+//		display.updateScorecard(category, player, score);
+		println(category);
+		println(isValidCategory);
+	}
+	
+	private void reroll() {
+		display.waitForPlayerToSelectDice();
+		
+		for(int i = 0; i < N_DICE; i++) {
+			if(display.isDieSelected(i)) {
+				dice[i] = rgen.nextInt(1, 6);
+			}
+		}
+		
+		display.displayDice(dice);
+	}
+	
+	private void rollDice() {
 		for(int i = 0; i < N_DICE; i++) {
 			dice[i] = rgen.nextInt(1, 6);
 		}
 		
 		display.displayDice(dice);
 	}
+	
+	private void turn(int player) {
 		
+	}
 /* Private instance variables */
 	private int nPlayers;
 	private String[] playerNames;
 	private YahtzeeDisplay display;
 	private RandomGenerator rgen = new RandomGenerator();
-	
+	int[] dice = new int[N_DICE];
 }
