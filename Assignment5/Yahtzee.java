@@ -19,39 +19,23 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 	
 	public void run() {
-//		IODialog dialog = getDialog();
-//		nPlayers = dialog.readInt("Enter number of players");
-//		playerNames = new String[nPlayers];
-//		for (int i = 1; i <= nPlayers; i++) {
-//			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
-//		}
-		
-		// Temperary playerNames
-		String[] playerNames = {"Jerry", "Qiwen"};
+		IODialog dialog = getDialog();
+		nPlayers = dialog.readInt("Enter number of players");
+		playerNames = new String[nPlayers];
+		for (int i = 1; i <= nPlayers; i++) {
+			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
+		}
 		
 		display = new YahtzeeDisplay(getGCanvas(), playerNames);
 		playGame();
 	}
 
 	private void playGame() {
-		display.waitForPlayerToClickRoll(1);
-		
-		rollDice();
-		reroll();
-		reroll();
-		
-		int category = display.waitForPlayerToSelectCategory();
-		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
-		
-		int score;
-		
-		if(isValidCategory) {
-			score = calculateScore(category, dice);
-		} else {
-			score = 0;
+		for(int i = 0; i < N_SCORING_CATEGORIES; i++) {
+			for(int j = 1; j <= nPlayers; j++) {
+				playTurn(j);
+			}
 		}
-		
-		display.updateScorecard(category, player, score);
 	}
 	
 	private void reroll() {
@@ -74,8 +58,25 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		display.displayDice(dice);
 	}
 	
-	private void turn(int player) {
+	private void playTurn(int player) {
+		display.waitForPlayerToClickRoll(player);
 		
+		rollDice();
+		reroll();
+		reroll();
+		
+		int category = display.waitForPlayerToSelectCategory();
+		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
+		
+		int score;
+		
+		if(isValidCategory) {
+			score = calculateScore(category, dice);
+		} else {
+			score = 0;
+		}
+		
+		display.updateScorecard(category, player, score);
 	}
 	
 	private int calculateScore(int category, int[] dice) {
@@ -121,8 +122,11 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				score += n;
 			}
 		}
+		
+		return score;
 	}
 	
+
 /* Private instance variables */
 	private int nPlayers;
 	private String[] playerNames;
