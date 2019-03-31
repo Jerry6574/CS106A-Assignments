@@ -42,9 +42,16 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		
 		int category = display.waitForPlayerToSelectCategory();
 		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
-//		display.updateScorecard(category, player, score);
-		println(category);
-		println(isValidCategory);
+		
+		int score;
+		
+		if(isValidCategory) {
+			score = calculateScore(category, dice);
+		} else {
+			score = 0;
+		}
+		
+		display.updateScorecard(category, player, score);
 	}
 	
 	private void reroll() {
@@ -70,6 +77,52 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private void turn(int player) {
 		
 	}
+	
+	private int calculateScore(int category, int[] dice) {
+		int score = 0;
+		
+		if(category <= SIXES) {
+			score = onesToSixesScore(category);
+			return score;
+		}
+		
+		switch (category) {		
+		case FULL_HOUSE:
+			score = 25;
+			break;
+			
+		case SMALL_STRAIGHT:
+			score = 30;
+			break;
+			
+		case LARGE_STRAIGHT:
+			score = 40;
+			break;
+			
+		case YAHTZEE:
+			score = 50;
+			break;
+		
+		// score calculation for THREE_OF_A_KIND, FOUR_OF_A_KIND and CHANCE
+		default:
+			for(int die: dice) {
+				score += die;
+			}
+			break;
+		}
+		
+		return score;
+	}
+	
+	private int onesToSixesScore(int n) {
+		int score = 0; 
+		for(int die: dice) {
+			if(die == n) {
+				score += n;
+			}
+		}
+	}
+	
 /* Private instance variables */
 	private int nPlayers;
 	private String[] playerNames;
