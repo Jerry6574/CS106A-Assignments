@@ -4,7 +4,6 @@
  * This program will eventually play the Yahtzee game.
  */
 
-import java.util.Locale.Category;
 
 import acm.io.*;
 import acm.program.*;
@@ -31,12 +30,55 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 
 	private void playGame() {
+		scoreCard = new int[nPlayers][N_CATEGORIES];
+		
 		// boolean array initialized to false
 		usedCategories = new boolean[nPlayers][N_SCORING_CATEGORIES];
 		for(int i = 0; i < N_SCORING_CATEGORIES; i++) {
 			for(int j = 1; j <= nPlayers; j++) {
-				playTurn(j);
+				playRound(j);
 			}
+		}
+		
+		int upperBonusThreshold = 63;
+		
+		for(int i = 1; i <= nPlayers; i++) {
+			for(int j = 0; j < SIXES; j++) {
+				scoreCard[i-1][UPPER_SCORE-1] += scoreCard[i-1][j];
+			}
+			
+			display.updateScorecard(UPPER_SCORE, i, scoreCard[i-1][UPPER_SCORE-1]);
+			
+			// add bonus if meet condition
+			if(scoreCard[i-1][UPPER_SCORE-1] >= upperBonusThreshold) {
+				scoreCard[i-1][UPPER_BONUS-1] = 35;
+			} else {
+				scoreCard[i-1][UPPER_BONUS-1] = 0;
+			}
+			
+			display.updateScorecard(UPPER_BONUS, i, scoreCard[i-1][UPPER_BONUS-1]);
+			
+			for(int j = THREE_OF_A_KIND; j < CHANCE; j++) {
+				scoreCard[i-1][LOWER_SCORE-1] += scoreCard[i-1][j];
+			}
+			
+			display.updateScorecard(LOWER_SCORE, i, scoreCard[i-1][LOWER_SCORE-1]);
+			
+			scoreCard[i-1][TOTAL-1] = scoreCard[i-1][UPPER_SCORE-1] + scoreCard[i-1][UPPER_BONUS-1] + scoreCard[i-1][LOWER_SCORE-1];
+			display.updateScorecard(TOTAL, i, scoreCard[i-1][TOTAL-1]);
+			
+			int currentMaxTotal =  0;
+			int currentWinner = 1;
+			
+			// find the winner index
+			for(int j = 1; j <= nPlayers; j++) {
+				if(scoreCard[j-1][TOTAL-1] > currentMaxTotal) {
+					currentMaxTotal = scoreCard[j-1][TOTAL-1];
+					currentWinner = j;
+				}
+			}
+			
+			display.printMessage("Congradullcation, " + playerNames[currentWinner] + ", you're the winnier with a total score of " + currentMaxTotal + "!");
 		}
 	}
 	
@@ -61,7 +103,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		display.displayDice(dice);
 	}
 	
-	private void playTurn(int player) {
+	private void playRound(int player) {
 		display.printMessage(playerNames[player - 1] + "'s turn. Click \"Roll Dice\" to roll the dice. ");
 		display.waitForPlayerToClickRoll(player);
 		
@@ -98,10 +140,12 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		
 		if(isValidCategory) {
 			score = calculateScore(category, dice);
+			
 		} else {
 			score = 0;
 		}
 		
+		scoreCard[player-1][category-1] = score;
 		display.updateScorecard(category, player, score);
 	}
 	
@@ -158,6 +202,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private String[] playerNames;
 	private YahtzeeDisplay display;
 	private RandomGenerator rgen = new RandomGenerator();
+	
 	private int[] dice = new int[N_DICE];
 	private boolean[][] usedCategories;
+	private int[][] scoreCard;
 }
