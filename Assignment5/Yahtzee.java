@@ -8,6 +8,7 @@
 import acm.io.*;
 import acm.program.*;
 import acm.util.*;
+import sun.security.provider.JavaKeyStore.CaseExactJKS;
 
 
 public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
@@ -18,15 +19,40 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 	
 	public void run() {
-		IODialog dialog = getDialog();
-		nPlayers = dialog.readInt("Enter number of players");
-		playerNames = new String[nPlayers];
-		for (int i = 1; i <= nPlayers; i++) {
-			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
-		}
+//		IODialog dialog = getDialog();
+//		nPlayers = dialog.readInt("Enter number of players");
+//		playerNames = new String[nPlayers];
+//		for (int i = 1; i <= nPlayers; i++) {
+//			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
+//		}
+//		
+//		display = new YahtzeeDisplay(getGCanvas(), playerNames);
+//		playGame();
 		
-		display = new YahtzeeDisplay(getGCanvas(), playerNames);
-		playGame();
+//		// Test Yahtzee
+//		for(int i = 0; i < N_DICE-1; i++) {
+//			dice[i] = 1;
+//		}
+//		dice[N_DICE-1] = 6;
+//		int category = YAHTZEE;
+		
+//		// Test THREE_OF_A_KIND
+//		dice[0] = 1;
+//		dice[1] = 1;
+//		dice[2] = 2;
+//		dice[3] = 2;
+//		dice[4] = 4;
+//		int category = THREE_OF_A_KIND;
+//		
+		// Test FOUR_OF_A_KIND
+		dice[0] = 1;
+		dice[1] = 1;
+		dice[2] = 2;
+		dice[3] = 1;
+		dice[4] = 1;
+		int category = FOUR_OF_A_KIND;
+		
+		println(checkCategory(dice, category));
 	}
 
 	private void playGame() {
@@ -196,6 +222,57 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		return score;
 	}
 	
+	private boolean checkCategory(int[] dice, int category) {
+		switch (category) {
+		case THREE_OF_A_KIND:
+
+			
+			
+		case FOUR_OF_A_KIND:
+			
+			return false;
+			
+		case FULL_HOUSE:
+			
+			return false;
+			
+		case SMALL_STRAIGHT:
+			
+			return false;
+			
+		case LARGE_STRAIGHT:
+			return false;
+			
+			
+		case YAHTZEE:
+			int die0 = dice[0];
+			for(int i = 1; i < N_DICE; i++) {
+				if(die0 != dice[i]) {
+					return false;
+				}
+			}
+			return true;
+		
+		default:
+			return true;
+		}
+	}
+	
+	private boolean checkNofKind(int dice, int n) {
+		for(int i = 0; i < N_DICE; i++) {
+			int matchCounts = 0; 
+			for(int j = 0; j < N_DICE; j++) {
+				if(dice[i] == dice[j]) {
+					matchCounts++;
+				}
+			}
+			
+			if(matchCounts >= 3) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 /* Private instance variables */
 	private int nPlayers;
