@@ -5,9 +5,12 @@
  */
 
 
+import com.sun.tools.javac.code.Attribute.Array;
+
 import acm.io.*;
 import acm.program.*;
 import acm.util.*;
+import java.util.*;
 import sun.security.provider.JavaKeyStore.CaseExactJKS;
 
 
@@ -44,13 +47,21 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 //		dice[4] = 4;
 //		int category = THREE_OF_A_KIND;
 //		
-		// Test FOUR_OF_A_KIND
+//		// Test N_OF_A_KIND
+//		dice[0] = 1;
+//		dice[1] = 1;
+//		dice[2] = 2;
+//		dice[3] = 3;
+//		dice[4] = 1;
+//		int category = THREE_OF_A_KIND;
+		
+		// Test LARGE_STRAIGHT
 		dice[0] = 1;
-		dice[1] = 1;
-		dice[2] = 2;
-		dice[3] = 1;
-		dice[4] = 1;
-		int category = FOUR_OF_A_KIND;
+		dice[1] = 2;
+		dice[2] = 4;
+		dice[3] = 3;
+		dice[4] = 6;
+		int category = LARGE_STRAIGHT;
 		
 		println(checkCategory(dice, category));
 	}
@@ -225,15 +236,15 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private boolean checkCategory(int[] dice, int category) {
 		switch (category) {
 		case THREE_OF_A_KIND:
-
-			
+			return checkNOfAKind(dice, 3);
 			
 		case FOUR_OF_A_KIND:
-			
-			return false;
+			return checkNOfAKind(dice, 4);
 			
 		case FULL_HOUSE:
-			
+			for(int i = 0; i < N_DICE; i++) {
+				
+			}
 			return false;
 			
 		case SMALL_STRAIGHT:
@@ -241,9 +252,18 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 			return false;
 			
 		case LARGE_STRAIGHT:
-			return false;
-			
-			
+			Arrays.sort(dice);
+			for(int i = 0; i < N_DICE-1; i++) {
+				if(dice[i] == dice[i+1]) {
+					return false;
+				}
+			}
+			if(dice[N_DICE-1] - dice[0] == N_DICE - 1) {
+				return true;
+			} else {
+				return false;
+			}
+
 		case YAHTZEE:
 			int die0 = dice[0];
 			for(int i = 1; i < N_DICE; i++) {
@@ -258,7 +278,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		}
 	}
 	
-	private boolean checkNofKind(int dice, int n) {
+	private boolean checkNOfAKind(int[] dice, int n) {
+		// compare every dice with every other dice, O(n^2)
 		for(int i = 0; i < N_DICE; i++) {
 			int matchCounts = 0; 
 			for(int j = 0; j < N_DICE; j++) {
@@ -267,7 +288,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				}
 			}
 			
-			if(matchCounts >= 3) {
+			if(matchCounts >= n) {
 				return true;
 			}
 		}
