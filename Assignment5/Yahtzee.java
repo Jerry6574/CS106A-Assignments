@@ -55,13 +55,21 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 //		dice[4] = 1;
 //		int category = THREE_OF_A_KIND;
 		
-		// Test LARGE_STRAIGHT
+//		// Test LARGE_STRAIGHT
+//		dice[0] = 1;
+//		dice[1] = 2;
+//		dice[2] = 4;
+//		dice[3] = 3;
+//		dice[4] = 6;
+//		int category = LARGE_STRAIGHT;
+		
+		// Test FULL_HOUSE
 		dice[0] = 1;
-		dice[1] = 2;
-		dice[2] = 4;
-		dice[3] = 3;
-		dice[4] = 6;
-		int category = LARGE_STRAIGHT;
+		dice[1] = 1;
+		dice[2] = 1;
+		dice[3] = 1;
+		dice[4] = 1;
+		int category = FULL_HOUSE;
 		
 		println(checkCategory(dice, category));
 	}
@@ -236,16 +244,19 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private boolean checkCategory(int[] dice, int category) {
 		switch (category) {
 		case THREE_OF_A_KIND:
-			return checkNOfAKind(dice, 3);
+			return checkNOfAKind(dice, 3, false);
 			
 		case FOUR_OF_A_KIND:
-			return checkNOfAKind(dice, 4);
+			return checkNOfAKind(dice, 4, false);
 			
 		case FULL_HOUSE:
-			for(int i = 0; i < N_DICE; i++) {
-				
+			// check if dice have proper 3 of a kind and a pair
+			// Yahtzee is not a full house
+			if(checkNOfAKind(dice, 3, true) && checkNOfAKind(dice, 2, true)) {
+				return true;
+			} else {
+				return false;
 			}
-			return false;
 			
 		case SMALL_STRAIGHT:
 			
@@ -278,7 +289,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		}
 	}
 	
-	private boolean checkNOfAKind(int[] dice, int n) {
+	private boolean checkNOfAKind(int[] dice, int n, boolean proper) {
 		// compare every dice with every other dice, O(n^2)
 		for(int i = 0; i < N_DICE; i++) {
 			int matchCounts = 0; 
@@ -288,9 +299,16 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				}
 			}
 			
-			if(matchCounts >= n) {
-				return true;
+			if(proper) {
+				if(matchCounts == n) {
+					return true;
+				}
+			} else {
+				if(matchCounts >= n) {
+					return true;
+				}
 			}
+
 		}
 		return false;
 	}
