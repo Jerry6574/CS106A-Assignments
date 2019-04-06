@@ -5,13 +5,10 @@
  */
 
 
-import com.sun.tools.javac.code.Attribute.Array;
-
 import acm.io.*;
 import acm.program.*;
 import acm.util.*;
 import java.util.*;
-import sun.security.provider.JavaKeyStore.CaseExactJKS;
 
 
 public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
@@ -22,56 +19,17 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	}
 	
 	public void run() {
-//		IODialog dialog = getDialog();
-//		nPlayers = dialog.readInt("Enter number of players");
-//		playerNames = new String[nPlayers];
-//		for (int i = 1; i <= nPlayers; i++) {
-//			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
-//		}
-//		
-//		display = new YahtzeeDisplay(getGCanvas(), playerNames);
-//		playGame();
+		IODialog dialog = getDialog();
+		nPlayers = dialog.readInt("Enter number of players");
+		playerNames = new String[nPlayers];
+		for (int i = 1; i <= nPlayers; i++) {
+			playerNames[i - 1] = dialog.readLine("Enter name for player " + i);
+		}
 		
-//		// Test Yahtzee
-//		for(int i = 0; i < N_DICE-1; i++) {
-//			dice[i] = 1;
-//		}
-//		dice[N_DICE-1] = 6;
-//		int category = YAHTZEE;
+		display = new YahtzeeDisplay(getGCanvas(), playerNames);
+		playGame();
 		
-//		// Test THREE_OF_A_KIND
-//		dice[0] = 1;
-//		dice[1] = 1;
-//		dice[2] = 2;
-//		dice[3] = 2;
-//		dice[4] = 4;
-//		int category = THREE_OF_A_KIND;
-//		
-//		// Test N_OF_A_KIND
-//		dice[0] = 1;
-//		dice[1] = 1;
-//		dice[2] = 2;
-//		dice[3] = 3;
-//		dice[4] = 1;
-//		int category = THREE_OF_A_KIND;
-		
-//		// Test LARGE_STRAIGHT
-//		dice[0] = 1;
-//		dice[1] = 2;
-//		dice[2] = 4;
-//		dice[3] = 3;
-//		dice[4] = 6;
-//		int category = LARGE_STRAIGHT;
-		
-		// Test FULL_HOUSE
-		dice[0] = 1;
-		dice[1] = 1;
-		dice[2] = 1;
-		dice[3] = 1;
-		dice[4] = 1;
-		int category = FULL_HOUSE;
-		
-		println(checkCategory(dice, category));
+
 	}
 
 	private void playGame() {
@@ -179,7 +137,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 			}
 		}
 
-		boolean isValidCategory = YahtzeeMagicStub.checkCategory(dice, category); 
+		boolean isValidCategory = checkCategory(dice, category); 
 		
 		int score;
 		
@@ -243,15 +201,18 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	
 	private boolean checkCategory(int[] dice, int category) {
 		switch (category) {
+		
+		// FOUR_OF_A_KIND and YAHTZEE can be categorized as THREE_OF_A_KIND
 		case THREE_OF_A_KIND:
 			return checkNOfAKind(dice, 3, false);
-			
+		
+		// YAHTZEE can be categorized as FOUR_OF_A_KIND
 		case FOUR_OF_A_KIND:
 			return checkNOfAKind(dice, 4, false);
 			
 		case FULL_HOUSE:
 			// check if dice have proper 3 of a kind and a pair
-			// Yahtzee is not a full house
+			// Yahtzee is not a FULL_HOUSE
 			if(checkNOfAKind(dice, 3, true) && checkNOfAKind(dice, 2, true)) {
 				return true;
 			} else {
@@ -259,16 +220,42 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 			}
 			
 		case SMALL_STRAIGHT:
+			Arrays.sort(dice);
 			
-			return false;
+			// in a sorted dice sequence, if there are 3 increment counts from the current die value, it's a small straight. 
+			int currentDieValue = dice[0];
+			int incrementCounts = 0;
 			
+			for(int i = 1; i < N_DICE; i++) {
+				// advance currentDieValue if the next dice is a +1 increment or next die is at 1 index
+				if(currentDieValue + 1 == dice[i]) {
+					currentDieValue = dice[i];
+					incrementCounts++;
+				
+				// handle dice == {1, 3, 4, 5, 6} case
+				} else if(i < 2){
+					currentDieValue = dice[i];
+				}
+			}
+			
+			if(incrementCounts >= 3) {
+				return true;
+			} else {
+				return false;
+			}
+			
+
 		case LARGE_STRAIGHT:
 			Arrays.sort(dice);
+			
+			// check if every die is distinct
 			for(int i = 0; i < N_DICE-1; i++) {
 				if(dice[i] == dice[i+1]) {
 					return false;
 				}
 			}
+			
+			// check if dice is a consecutive sequence (difference between max and min is 4)
 			if(dice[N_DICE-1] - dice[0] == N_DICE - 1) {
 				return true;
 			} else {
@@ -277,6 +264,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 
 		case YAHTZEE:
 			int die0 = dice[0];
+			
+			// check if all die values equal to each other
 			for(int i = 1; i < N_DICE; i++) {
 				if(die0 != dice[i]) {
 					return false;
@@ -284,6 +273,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 			}
 			return true;
 		
+		// ONES to SIXES and CHANCE always return true
 		default:
 			return true;
 		}
@@ -299,6 +289,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				}
 			}
 			
+			// e.g. a proper 3 of a kind means exactly 3 of kind
 			if(proper) {
 				if(matchCounts == n) {
 					return true;
