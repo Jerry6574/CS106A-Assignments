@@ -1,3 +1,11 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+
+import acm.util.ErrorException;
+import acm.program.*;
+
 /*
  * File: NameSurferDataBase.java
  * -----------------------------
@@ -11,6 +19,8 @@
 
 public class NameSurferDataBase implements NameSurferConstants {
 	
+	private HashMap<String, NameSurferEntry> namesDataBase;
+	
 /* Constructor: NameSurferDataBase(filename) */
 /**
  * Creates a new NameSurferDataBase and initializes it using the
@@ -19,7 +29,23 @@ public class NameSurferDataBase implements NameSurferConstants {
  * occurs as the file is being read.
  */
 	public NameSurferDataBase(String filename) {
-		// You fill this in //
+		namesDataBase = new HashMap<>();
+		try {
+			BufferedReader namesData = new BufferedReader(new FileReader(filename));
+			while(true) {
+				String line = namesData.readLine();
+				if(line == null) {
+					break;
+				}
+				NameSurferEntry entry = new NameSurferEntry(line);
+				namesDataBase.put(entry.getName(), entry);
+			}
+			namesData.close();
+			
+		} catch (IOException ex) {
+			throw new ErrorException(ex);
+		}
+
 	}
 	
 /* Method: findEntry(name) */
@@ -29,8 +55,7 @@ public class NameSurferDataBase implements NameSurferConstants {
  * method returns null.
  */
 	public NameSurferEntry findEntry(String name) {
-		// You need to turn this stub into a real implementation //
-		return null;
+		return namesDataBase.get(name);
 	}
 }
 

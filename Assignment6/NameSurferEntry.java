@@ -13,7 +13,7 @@ import java.util.*;
 
 public class NameSurferEntry implements NameSurferConstants {
 	private String name;
-	private int[] rank = new int[11];
+	private int[] rank = new int[NDECADES];
 /* Constructor: NameSurferEntry(line) */
 /**
  * Creates a new NameSurferEntry from a data line as it appears
