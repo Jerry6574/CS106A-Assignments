@@ -9,8 +9,11 @@
 import acm.util.*;
 import java.util.*;
 
-public class NameSurferEntry implements NameSurferConstants {
+//import javax.sound.sampled.Line;
 
+public class NameSurferEntry implements NameSurferConstants {
+	private String name;
+	private int[] rank = new int[11];
 /* Constructor: NameSurferEntry(line) */
 /**
  * Creates a new NameSurferEntry from a data line as it appears
@@ -19,7 +22,13 @@ public class NameSurferEntry implements NameSurferConstants {
  * decade.
  */
 	public NameSurferEntry(String line) {
-		// You fill this in //
+		// split line by space delimiter
+		String[] splitLine = line.split("\\s+"); 
+		name = splitLine[0];
+		
+		for(int i = 1; i < splitLine.length; i++) {
+			rank[i-1] = Integer.parseInt(splitLine[i]);
+		}
 	}
 
 /* Method: getName() */
@@ -28,7 +37,7 @@ public class NameSurferEntry implements NameSurferConstants {
  */
 	public String getName() {
 		// You need to turn this stub into a real implementation //
-		return null;
+		return name;
 	}
 
 /* Method: getRank(decade) */
@@ -41,7 +50,10 @@ public class NameSurferEntry implements NameSurferConstants {
  */
 	public int getRank(int decade) {
 		// You need to turn this stub into a real implementation //
-		return 0;
+		
+		int index = (decade - 1900) / 10;
+		
+		return rank[index];
 	}
 
 /* Method: toString() */
@@ -51,7 +63,7 @@ public class NameSurferEntry implements NameSurferConstants {
  */
 	public String toString() {
 		// You need to turn this stub into a real implementation //
-		return "";
+		return name + " " + Arrays.toString(rank);
 	}
 }
 
