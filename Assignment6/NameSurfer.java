@@ -10,10 +10,12 @@ import java.awt.event.*;
 import javax.swing.*;
 
 // Temporarily extends to ConsoleProgram, switch to Program later
-public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
+public class NameSurfer extends Program implements NameSurferConstants {
 	private JTextField nameTextField;
-	private JButton graph;
-	private JButton clear;
+	private JButton graphButton;
+	private JButton clearButton;
+	private NameSurferGraph graph;
+	
 /* Method: init() */
 /**
  * This method has the responsibility for reading in the data base
@@ -23,12 +25,18 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
 		add(new JLabel("Name"), SOUTH);
 		
 		nameTextField = new JTextField(30);
-		graph = new JButton("Graph");
-		clear = new JButton("Clear");
+		graphButton = new JButton("Graph");
+		clearButton = new JButton("Clear");
+		graph = new NameSurferGraph();
+		
+		graph.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
 		
 		add(nameTextField, SOUTH);
-		add(graph, SOUTH);
-		add(clear, SOUTH);
+		add(graphButton, SOUTH);
+		add(clearButton, SOUTH);
+		add(graph);
+		
+		graph.update();
 		
 		addActionListeners();
 	}
@@ -40,10 +48,13 @@ public class NameSurfer extends ConsoleProgram implements NameSurferConstants {
  * button actions.
  */
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == graph) {
-			println("Graph: " + "\"" + nameTextField.getText() + "\"");
-		} else if(e.getSource() == clear) {
-			println("Clear");
+		if(e.getSource() == graphButton) {
+//			println("Graph: " + "\"" + nameTextField.getText() + "\"");
+			
+			
+		} else if(e.getSource() == clearButton) {
+//			println("Clear");
+			
 			
 		}
 	}

@@ -49,7 +49,27 @@ public class NameSurferGraph extends GCanvas
 	* the size of the canvas changes.
 	*/
 	public void update() {
-		//	 You fill this in //
+		removeAll();
+		
+		
+		for(int i = 0; i < NDECADES; i++) {
+			// add vertical lines
+			double x0 = i * (double) getWidth() / 11;
+			double y0 = 0;
+			double x1 = x0;
+			double y1 = getHeight();
+			GLine verticalLine = new GLine(x0, y0, x1, y1);
+			add(verticalLine);
+			
+			// add decade labels
+			int offset = 3; 
+			GLabel decade = new GLabel(Integer.toString(1900 + 10 * i));
+			add(decade, x0 + offset, y1 - offset); 
+		}
+		
+		// add horizontal lines
+		add(new GLine(0, getHeight() / 30, getWidth(), getHeight() / 30));
+		add(new GLine(0, getHeight() - getHeight() / 30, getWidth(), getHeight() - getHeight() / 30));
 	}
 	
 	
