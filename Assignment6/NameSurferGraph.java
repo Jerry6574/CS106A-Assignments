@@ -118,10 +118,6 @@ public class NameSurferGraph extends GCanvas
 		
 	}
 	
-	private void drawGrid() {
-		
-	}
-
 	/* Implementation of the ComponentListener interface */
 	public void componentHidden(ComponentEvent e) { }
 	public void componentMoved(ComponentEvent e) { }
