@@ -13,7 +13,8 @@ import java.awt.*;
 
 public class NameSurferGraph extends GCanvas
 	implements NameSurferConstants, ComponentListener {
-
+	private ArrayList<NameSurferEntry> entryList = new ArrayList<>();
+	
 	/**
 	* Creates a new NameSurferGraph object that displays the data.
 	*/
@@ -26,7 +27,7 @@ public class NameSurferGraph extends GCanvas
 	* Clears the list of name surfer entries stored inside this class.
 	*/
 	public void clear() {
-		//	 You fill this in //
+		entryList.clear();
 	}
 	
 	/* Method: addEntry(entry) */
@@ -37,6 +38,7 @@ public class NameSurferGraph extends GCanvas
 	*/
 	public void addEntry(NameSurferEntry entry) {
 		// You fill this in //
+		entryList.add(entry);
 	}
 	
 	
@@ -51,7 +53,6 @@ public class NameSurferGraph extends GCanvas
 	public void update() {
 		removeAll();
 		
-		
 		for(int i = 0; i < NDECADES; i++) {
 			// add vertical lines
 			double x0 = i * (double) getWidth() / 11;
@@ -62,22 +63,69 @@ public class NameSurferGraph extends GCanvas
 			add(verticalLine);
 			
 			// add decade labels
-			int offset = 3; 
+			int decadelabelOffset = 3; 
 			GLabel decade = new GLabel(Integer.toString(1900 + 10 * i));
-			add(decade, x0 + offset, y1 - offset); 
+			add(decade, x0 + decadelabelOffset, y1 - decadelabelOffset); 
 		}
 		
 		// add horizontal lines
-		add(new GLine(0, getHeight() / 30, getWidth(), getHeight() / 30));
-		add(new GLine(0, getHeight() - getHeight() / 30, getWidth(), getHeight() - getHeight() / 30));
+		double hLineOffset = getHeight() / 30;
+		
+		add(new GLine(0, hLineOffset, getWidth(), hLineOffset));
+		add(new GLine(0, getHeight() - hLineOffset, getWidth(), getHeight() - hLineOffset));
+		
+
+		for(NameSurferEntry entry: entryList) {
+			String name = entry.getName();
+			
+			for(int i = 0; i < NDECADES; i++) {
+				int decade = 1900 + 10 * i;
+				int nextDecade = 1900 + 10 * (i + 1);
+				double x0 = i * (double) getWidth() / 11;
+				double x1 = (i + 1) * (double) getWidth() / 11;
+				double y0;
+				
+				int rank = entry.getRank(decade);
+
+				GLabel nameRank;
+				if(rank > 0) {
+					y0 = hLineOffset + (getHeight() - 2 * hLineOffset) * rank / MAX_RANK;
+					nameRank = new GLabel(name + " " + rank, x0, y0);
+			
+				} else {
+					y0 = getHeight() - hLineOffset;
+					nameRank = new GLabel(name + " *", x0, y0);
+				}
+				add(nameRank);
+				
+				if(i < NDECADES - 1) {
+					int nextRank = entry.getRank(nextDecade);
+					GLine rankLine;
+					double y1;
+					if(rank > 0 || nextRank > 0) {
+						if(nextRank == 0) {
+							y1 = getHeight() - hLineOffset;
+						} else {
+							y1 = hLineOffset + (getHeight() - 2 * hLineOffset) * nextRank / MAX_RANK;
+						}
+						rankLine = new GLine(x0, y0, x1, y1);
+						add(rankLine);
+					}
+				}
+
+			}
+		}
+		
 	}
 	
-	
-	
-	
+	private void drawGrid() {
+		
+	}
+
 	/* Implementation of the ComponentListener interface */
 	public void componentHidden(ComponentEvent e) { }
 	public void componentMoved(ComponentEvent e) { }
 	public void componentResized(ComponentEvent e) { update(); }
 	public void componentShown(ComponentEvent e) { }
+
 }

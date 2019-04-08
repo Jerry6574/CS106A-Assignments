@@ -7,6 +7,8 @@
 
 import acm.program.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 // Temporarily extends to ConsoleProgram, switch to Program later
@@ -14,7 +16,9 @@ public class NameSurfer extends Program implements NameSurferConstants {
 	private JTextField nameTextField;
 	private JButton graphButton;
 	private JButton clearButton;
+	private NameSurferDataBase database;
 	private NameSurferGraph graph;
+	
 	
 /* Method: init() */
 /**
@@ -27,6 +31,7 @@ public class NameSurfer extends Program implements NameSurferConstants {
 		nameTextField = new JTextField(30);
 		graphButton = new JButton("Graph");
 		clearButton = new JButton("Clear");
+		database = new NameSurferDataBase(NAMES_DATA_FILE);
 		graph = new NameSurferGraph();
 		
 		graph.setSize(APPLICATION_WIDTH, APPLICATION_HEIGHT);
@@ -35,8 +40,6 @@ public class NameSurfer extends Program implements NameSurferConstants {
 		add(graphButton, SOUTH);
 		add(clearButton, SOUTH);
 		add(graph);
-		
-		graph.update();
 		
 		addActionListeners();
 	}
@@ -49,13 +52,20 @@ public class NameSurfer extends Program implements NameSurferConstants {
  */
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == graphButton) {
-//			println("Graph: " + "\"" + nameTextField.getText() + "\"");
+
+			String name = nameTextField.getText();
+			if(name != "") {
+				NameSurferEntry entry = database.findEntry(name);
+				if(entry != null) {
+					graph.addEntry(entry);
+					graph.update();
+				}
+			}
 			
 			
 		} else if(e.getSource() == clearButton) {
-//			println("Clear");
-			
-			
+			graph.clear();
+			graph.update();
 		}
 	}
 	
