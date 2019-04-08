@@ -9,11 +9,15 @@
 import acm.graphics.*;
 import java.awt.event.*;
 import java.util.*;
+
+import com.sun.beans.introspect.PropertyInfo.Name;
+
 import java.awt.*;
 
 public class NameSurferGraph extends GCanvas
 	implements NameSurferConstants, ComponentListener {
 	private ArrayList<NameSurferEntry> entryList = new ArrayList<>();
+	private Color[] entryColors = {Color.BLACK, Color.RED, Color.BLUE, Color.MAGENTA};
 	
 	/**
 	* Creates a new NameSurferGraph object that displays the data.
@@ -75,14 +79,16 @@ public class NameSurferGraph extends GCanvas
 		add(new GLine(0, getHeight() - hLineOffset, getWidth(), getHeight() - hLineOffset));
 		
 
-		for(NameSurferEntry entry: entryList) {
+		for(int i =  0; i < entryList.size(); i++) {
+			NameSurferEntry entry = entryList.get(i);
+			Color currentColor = entryColors[i % 4];
 			String name = entry.getName();
 			
-			for(int i = 0; i < NDECADES; i++) {
-				int decade = 1900 + 10 * i;
-				int nextDecade = 1900 + 10 * (i + 1);
-				double x0 = i * (double) getWidth() / 11;
-				double x1 = (i + 1) * (double) getWidth() / 11;
+			for(int j = 0; j < NDECADES; j++) {
+				int decade = 1900 + 10 * j;
+				int nextDecade = 1900 + 10 * (j + 1);
+				double x0 = j * (double) getWidth() / 11;
+				double x1 = (j + 1) * (double) getWidth() / 11;
 				double y0;
 				
 				int rank = entry.getRank(decade);
@@ -96,9 +102,10 @@ public class NameSurferGraph extends GCanvas
 					y0 = getHeight() - hLineOffset;
 					nameRank = new GLabel(name + " *", x0, y0);
 				}
+				nameRank.setColor(currentColor);
 				add(nameRank);
 				
-				if(i < NDECADES - 1) {
+				if(j < NDECADES - 1) {
 					int nextRank = entry.getRank(nextDecade);
 					GLine rankLine;
 					double y1;
@@ -109,6 +116,7 @@ public class NameSurferGraph extends GCanvas
 							y1 = hLineOffset + (getHeight() - 2 * hLineOffset) * nextRank / MAX_RANK;
 						}
 						rankLine = new GLine(x0, y0, x1, y1);
+						rankLine.setColor(currentColor);
 						add(rankLine);
 					}
 				}
