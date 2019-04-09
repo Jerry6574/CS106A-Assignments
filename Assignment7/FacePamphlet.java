@@ -102,19 +102,18 @@ public class FacePamphlet extends ConsoleProgram
 			if(!name.equals("")) {
 				println(name + " looked up. ");
 			}
-			
+		
+		// handle enter press and button click
 		} else if(e.getSource() == changeStatusButton || (e.getSource() == changeStatusTF && e.getActionCommand().equals("Go"))) {
 			String status = changeStatusTF.getText();
 			if(!status.equals("")) {
 				println("Status changed to " + status);
 			}
-			
 		} else if(e.getSource() == changePictureButton || (e.getSource() == changePictureTF) && e.getActionCommand().equals("Go")) {
 			String pictureFile = changePictureTF.getText();
 			if(!pictureFile.equals("")) {
 				println("Picture changed to " + pictureFile);
 			}
-			
 		} else if(e.getSource() ==  addFriendButton || (e.getSource() == addFriendTF && e.getActionCommand().equals("Go"))) {
 			String friend = addFriendTF.getText();
 			if(!friend.equals("")) {
