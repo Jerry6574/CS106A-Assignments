@@ -57,8 +57,8 @@ public class NameSurferGraph extends GCanvas
 	public void update() {
 		removeAll();
 		
+		// add vertical lines of the grid
 		for(int i = 0; i < NDECADES; i++) {
-			// add vertical lines
 			double x0 = i * (double) getWidth() / 11;
 			double y0 = 0;
 			double x1 = x0;
@@ -72,18 +72,20 @@ public class NameSurferGraph extends GCanvas
 			add(decade, x0 + decadelabelOffset, y1 - decadelabelOffset); 
 		}
 		
-		// add horizontal lines
+		// add horizontal lines of the grid
 		double hLineOffset = getHeight() / 30;
-		
 		add(new GLine(0, hLineOffset, getWidth(), hLineOffset));
 		add(new GLine(0, getHeight() - hLineOffset, getWidth(), getHeight() - hLineOffset));
 		
-
+		// add each entry in entryList
 		for(int i =  0; i < entryList.size(); i++) {
 			NameSurferEntry entry = entryList.get(i);
+			
+			// cycle through entryColors
 			Color currentColor = entryColors[i % 4];
 			String name = entry.getName();
 			
+			// add nameRank label for each decade
 			for(int j = 0; j < NDECADES; j++) {
 				int decade = 1900 + 10 * j;
 				int nextDecade = 1900 + 10 * (j + 1);
@@ -94,10 +96,13 @@ public class NameSurferGraph extends GCanvas
 				int rank = entry.getRank(decade);
 
 				GLabel nameRank;
+				// determine the nameRank label position
 				if(rank > 0) {
+					// y-position proportional to rank
 					y0 = hLineOffset + (getHeight() - 2 * hLineOffset) * rank / MAX_RANK;
 					nameRank = new GLabel(name + " " + rank, x0, y0);
-			
+				
+				// put nameRank label at bottom of grid if rank is 0
 				} else {
 					y0 = getHeight() - hLineOffset;
 					nameRank = new GLabel(name + " *", x0, y0);
@@ -109,7 +114,10 @@ public class NameSurferGraph extends GCanvas
 					int nextRank = entry.getRank(nextDecade);
 					GLine rankLine;
 					double y1;
+					
+					// only draw rankLine if current rank or next rank is above 1000
 					if(rank > 0 || nextRank > 0) {
+						// determine the rankLine direction
 						if(nextRank == 0) {
 							y1 = getHeight() - hLineOffset;
 						} else {
