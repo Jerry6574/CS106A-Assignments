@@ -10,9 +10,12 @@
 import acm.graphics.*;
 import java.awt.*;
 import java.util.*;
+import javax.swing.*;
 
 public class FacePamphletCanvas extends GCanvas 
 					implements FacePamphletConstants {
+	
+
 	
 	/** 
 	 * Constructor
@@ -20,7 +23,10 @@ public class FacePamphletCanvas extends GCanvas
 	 * the display
 	 */
 	public FacePamphletCanvas() {
-		// You fill this in
+
+		
+		
+		
 	}
 
 	

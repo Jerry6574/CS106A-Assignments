@@ -11,9 +11,25 @@ import acm.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class FacePamphlet extends Program 
+public class FacePamphlet extends ConsoleProgram 
 					implements FacePamphletConstants {
-
+	
+//	private FacePamphletCanvas canvas;
+	
+	private JButton addButton;
+	private JButton deleteButton;
+	private JButton lookUpButton;
+	private JButton changeStatusButton;
+	private JButton changePictureButton;
+	private JButton addFriendButton;
+	
+	private JLabel nameLabel;
+	
+	private JTextField nameTF;
+	private JTextField changeStatusTF;
+	private JTextField changePictureTF;
+	private JTextField addFriendTF;
+	
 	/**
 	 * This method has the responsibility for initializing the 
 	 * interactors in the application, and taking care of any other 
@@ -21,6 +37,47 @@ public class FacePamphlet extends Program
 	 */
 	public void init() {
 		// You fill this in
+//		canvas = new FacePamphletCanvas();
+		
+		nameLabel = new JLabel("Name");
+		nameTF = new JTextField(TEXT_FIELD_SIZE);
+		addButton = new JButton("Add");
+		deleteButton = new JButton("Delete");
+		lookUpButton = new JButton("Lookup");
+		
+		add(nameLabel, NORTH);
+		add(nameTF, NORTH);
+		add(addButton, NORTH);
+		add(deleteButton, NORTH);
+		add(lookUpButton, NORTH);
+		
+		changeStatusTF = new JTextField(TEXT_FIELD_SIZE);
+		changeStatusTF.addActionListener(this);
+		changeStatusTF.setActionCommand("Go");
+		changeStatusButton = new JButton("Change Status");
+		
+		changePictureTF = new JTextField(TEXT_FIELD_SIZE);
+		changePictureTF.addActionListener(this);
+		changePictureTF.setActionCommand("Go");
+		changePictureButton =  new JButton("Change Picture");
+		
+		addFriendTF = new JTextField(TEXT_FIELD_SIZE);
+		addFriendTF.addActionListener(this);
+		addFriendTF.setActionCommand("Go");
+		addFriendButton = new JButton("Add Friend");
+		
+		add(changeStatusTF, WEST); 
+		add(changeStatusButton, WEST); 
+		add(new JLabel(EMPTY_LABEL_TEXT), WEST); 
+		
+		add(changePictureTF, WEST); 
+		add(changePictureButton, WEST); 
+		add(new JLabel(EMPTY_LABEL_TEXT), WEST); 
+		
+		add(addFriendTF, WEST); 
+		add(addFriendButton, WEST); 
+		
+		addActionListeners();
     }
     
   
@@ -30,7 +87,40 @@ public class FacePamphlet extends Program
      * to respond to these actions.
      */
     public void actionPerformed(ActionEvent e) {
-		// You fill this in as well as add any additional methods
+    	String name = nameTF.getText();
+		if(e.getSource() == addButton) {
+			if(!name.equals("")) {
+				println(name + " added. ");
+			}
+			
+		} else if(e.getSource() == deleteButton) {
+			if(!name.equals("")) {
+				println(name + " deleted. ");
+			}
+			
+		} else if(e.getSource() == lookUpButton) {
+			if(!name.equals("")) {
+				println(name + " looked up. ");
+			}
+			
+		} else if(e.getSource() == changeStatusButton || (e.getSource() == changeStatusTF && e.getActionCommand().equals("Go"))) {
+			String status = changeStatusTF.getText();
+			if(!status.equals("")) {
+				println("Status changed to " + status);
+			}
+			
+		} else if(e.getSource() == changePictureButton || (e.getSource() == changePictureTF) && e.getActionCommand().equals("Go")) {
+			String pictureFile = changePictureTF.getText();
+			if(!pictureFile.equals("")) {
+				println("Picture changed to " + pictureFile);
+			}
+			
+		} else if(e.getSource() ==  addFriendButton || (e.getSource() == addFriendTF && e.getActionCommand().equals("Go"))) {
+			String friend = addFriendTF.getText();
+			if(!friend.equals("")) {
+				println("Added Friend: " + friend);
+			}
+		} 
 	}
 
 }
