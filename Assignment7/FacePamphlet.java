@@ -14,6 +14,7 @@ import javax.swing.*;
 public class FacePamphlet extends ConsoleProgram 
 					implements FacePamphletConstants {
 	
+	private FacePamphletDatabase database;
 //	private FacePamphletCanvas canvas;
 	
 	private JButton addButton;
@@ -36,7 +37,8 @@ public class FacePamphlet extends ConsoleProgram
 	 * initialization that needs to be performed.
 	 */
 	public void init() {
-		// You fill this in
+		
+		database = new FacePamphletDatabase();
 //		canvas = new FacePamphletCanvas();
 		
 		nameLabel = new JLabel("Name");
@@ -88,19 +90,36 @@ public class FacePamphlet extends ConsoleProgram
      */
     public void actionPerformed(ActionEvent e) {
     	String name = nameTF.getText();
+    	
 		if(e.getSource() == addButton) {
 			if(!name.equals("")) {
-				println(name + " added. ");
+				if(database.containsProfile(name)) {
+					println("Add: profile for " + name + " already exists: " + database.getProfile(name));
+				} else {
+					FacePamphletProfile profile = new FacePamphletProfile(name);
+					database.addProfile(profile);
+					println("Add: new profile: " + profile.toString());
+				}
 			}
 			
 		} else if(e.getSource() == deleteButton) {
 			if(!name.equals("")) {
-				println(name + " deleted. ");
+				if(database.containsProfile(name)) {
+					database.deleteProfile(name);
+					println("Delete: profile of " + name + " deleted");
+				} else {
+					println("Delete: profile with name " + name + " does not exist");
+				}
 			}
 			
 		} else if(e.getSource() == lookUpButton) {
 			if(!name.equals("")) {
-				println(name + " looked up. ");
+				if(database.containsProfile(name)) {
+					FacePamphletProfile profile = database.getProfile(name);
+					println("Lookup: " + profile.toString());
+				} else {
+					println("Lookup: profile with name "  + name + " does not exist");
+				}
 			}
 		
 		// handle enter press and button click

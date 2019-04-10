@@ -24,6 +24,9 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 */
 	public FacePamphletProfile(String name) {
 		this.name = name;
+		setStatus("");
+		friendList = new ArrayList<>();
+		
 	}
 
 	/** This method returns the name associated with the profile. */ 

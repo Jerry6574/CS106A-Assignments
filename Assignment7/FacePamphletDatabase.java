@@ -9,14 +9,16 @@
 import java.util.*;
 
 public class FacePamphletDatabase implements FacePamphletConstants {
-
+	
+	private HashMap<String, FacePamphletProfile> database;
+	
 	/** 
 	 * Constructor
 	 * This method takes care of any initialization needed for 
 	 * the database.
 	 */
 	public FacePamphletDatabase() {
-		// You fill this in
+		database = new HashMap<>();
 	}
 	
 	
@@ -27,7 +29,8 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the new profile passed in.
 	 */
 	public void addProfile(FacePamphletProfile profile) {
-		// You fill this in
+		String name = profile.getName();
+		database.put(name, profile);
 	}
 
 	
@@ -37,8 +40,7 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the given name, the method returns null.
 	 */
 	public FacePamphletProfile getProfile(String name) {
-		// You fill this in.  Currently always returns null.
-		return null;
+		return database.get(name);
 	}
 	
 	
@@ -52,7 +54,13 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * the database is unchanged after calling this method.
 	 */
 	public void deleteProfile(String name) {
-		// You fill this in
+		// remove the to-be-deleted profile from everyone's friend list
+		for(String nameKey: database.keySet()) {
+			FacePamphletProfile profile = getProfile(nameKey);
+			profile.removeFriend(name);
+		}
+		
+		database.remove(name);
 	}
 
 	
@@ -61,8 +69,7 @@ public class FacePamphletDatabase implements FacePamphletConstants {
 	 * that has the given name.  It returns false otherwise.
 	 */
 	public boolean containsProfile(String name) {
-		// You fill this in.  Currently always returns false.
-		return false;
+		return database.containsKey(name);
 	}
 
 }
