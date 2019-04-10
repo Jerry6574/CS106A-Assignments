@@ -9,6 +9,8 @@ import acm.program.*;
 import acm.graphics.*;
 import acm.util.*;
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*;
 
 public class FacePamphlet extends ConsoleProgram 
@@ -140,19 +142,52 @@ public class FacePamphlet extends ConsoleProgram
 				if(currentProfile != null) {
 					currentProfile.setStatus(status);
 					println("Status change: " + currentProfile.getName() + " is " + status);
+					println("--> Current profile: " + currentProfile.toString());
 				} else {
 					println("Please select a profile to change status of. ");
+					println("--> No current profile");
 				}
 			}
 		} else if(e.getSource() == changePictureButton || (e.getSource() == changePictureTF) && e.getActionCommand().equals("Go")) {
-			String pictureFile = changePictureTF.getText();
-			if(!pictureFile.equals("")) {
-				println("Picture changed to " + pictureFile);
+			String imageFileName = changePictureTF.getText();
+			GImage image = null;
+			if(!imageFileName.equals("")) {
+				try {
+					image = new GImage(imageFileName);
+					if(currentProfile != null) {
+						currentProfile.setImage(image);
+						println("Picture updated. ");
+						println("--> Current profile: " + currentProfile.toString());
+					} else {
+						println("Please select a profile to change image. ");
+						println("--> No current profile");
+					}
+				} catch (ErrorException ex) {
+					println("Please provide a valid picture file name. ");
+					if(currentProfile != null) {
+						println("--> Current profile: " + currentProfile.toString());
+					} else {
+						println("--> No current profile");
+					}
+				}
 			}
 		} else if(e.getSource() ==  addFriendButton || (e.getSource() == addFriendTF && e.getActionCommand().equals("Go"))) {
 			String friend = addFriendTF.getText();
 			if(!friend.equals("")) {
-				println("Added Friend: " + friend);
+				if(currentProfile != null) {
+					if(database.containsProfile(friend)) {
+						currentProfile.addFriend(friend);
+						println(friend + " has been added to your friend list. ");
+						// add friend reciprocally
+						database.getProfile(friend).addFriend(currentProfile.getName());
+					} else {
+						println(friend + " does not have a valid profile in the system. ");
+					}
+					println("--> Current profile: " + currentProfile.toString());
+				} else {
+					println("Please select a profile to add friend. ");
+					println("--> No current profile");
+				}
 			}
 		} 
 	}
