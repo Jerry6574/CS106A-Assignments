@@ -15,6 +15,7 @@ public class FacePamphlet extends ConsoleProgram
 					implements FacePamphletConstants {
 	
 	private FacePamphletDatabase database;
+	private FacePamphletProfile currentProfile;
 //	private FacePamphletCanvas canvas;
 	
 	private JButton addButton;
@@ -94,11 +95,15 @@ public class FacePamphlet extends ConsoleProgram
 		if(e.getSource() == addButton) {
 			if(!name.equals("")) {
 				if(database.containsProfile(name)) {
+					currentProfile = database.getProfile(name);
 					println("Add: profile for " + name + " already exists: " + database.getProfile(name));
+					println("--> Current profile: " + currentProfile.toString());
 				} else {
 					FacePamphletProfile profile = new FacePamphletProfile(name);
 					database.addProfile(profile);
+					currentProfile = profile;
 					println("Add: new profile: " + profile.toString());
+					println("--> Current profile: " + currentProfile.toString());
 				}
 			}
 			
@@ -111,14 +116,20 @@ public class FacePamphlet extends ConsoleProgram
 					println("Delete: profile with name " + name + " does not exist");
 				}
 			}
+			currentProfile = null;
+			println("--> No current profile");
 			
 		} else if(e.getSource() == lookUpButton) {
 			if(!name.equals("")) {
 				if(database.containsProfile(name)) {
 					FacePamphletProfile profile = database.getProfile(name);
+					currentProfile = profile;
 					println("Lookup: " + profile.toString());
+					println("--> Current profile: " + currentProfile.toString());
 				} else {
 					println("Lookup: profile with name "  + name + " does not exist");
+					currentProfile = null;
+					println("--> No current profile");
 				}
 			}
 		
@@ -126,7 +137,12 @@ public class FacePamphlet extends ConsoleProgram
 		} else if(e.getSource() == changeStatusButton || (e.getSource() == changeStatusTF && e.getActionCommand().equals("Go"))) {
 			String status = changeStatusTF.getText();
 			if(!status.equals("")) {
-				println("Status changed to " + status);
+				if(currentProfile != null) {
+					currentProfile.setStatus(status);
+					println("Status change: " + currentProfile.getName() + " is " + status);
+				} else {
+					println("Please select a profile to change status of. ");
+				}
 			}
 		} else if(e.getSource() == changePictureButton || (e.getSource() == changePictureTF) && e.getActionCommand().equals("Go")) {
 			String pictureFile = changePictureTF.getText();
