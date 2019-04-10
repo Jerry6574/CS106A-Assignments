@@ -50,7 +50,6 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * returns the empty string ("").
 	 */ 
 	public String getStatus() {
-		// You fill this in.  Currently always returns the empty string.
 		return this.status;
 	}
 	
@@ -99,8 +98,7 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * associated with the profile.
 	 */ 
 	public Iterator<String> getFriends() {
-		// You fill this in.  Currently always returns null.
-		return null;
+		return friendList.iterator();
 	}
 	
 	/** 
@@ -115,8 +113,10 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * would return the string: "Alice (coding): Don, Chelsea, Bob"
 	 */ 
 	public String toString() {
-		// You fill this in.  Currently always returns the empty string.
-		return "";
+		String friends = friendList.toString();
+		friends = friends.substring(1, friends.length()-1);
+		
+		return this.name + " (" + status + "): " + friends;
 	}
 	
 }
