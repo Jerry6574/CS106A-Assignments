@@ -57,7 +57,7 @@ public class FacePamphletCanvas extends GCanvas
 	public void displayProfile(FacePamphletProfile profile) {
 		removeAll();
 		String name = profile.getName();
-		GImage image = profile.getImage();
+		
 		String status = profile.getStatus();
 		Iterator<String> friends = profile.getFriends();
 		
@@ -68,7 +68,8 @@ public class FacePamphletCanvas extends GCanvas
 		add(nameLabel, LEFT_MARGIN, nameLabelY);
 		
 		double imageY = nameLabelY + IMAGE_MARGIN;
-		if(image != null) {
+		if(profile.getImageFileName() != null && profile.getImage() != null) {
+			GImage image = profile.getImage();
 			// display image
 			image.scale(IMAGE_WIDTH / image.getWidth(), IMAGE_HEIGHT / image.getHeight());
 			add(image, LEFT_MARGIN, imageY);

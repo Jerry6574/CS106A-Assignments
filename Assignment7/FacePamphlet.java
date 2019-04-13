@@ -185,7 +185,7 @@ public class FacePamphlet extends Program
 				if(currentProfile != null) {
 					try {
 						image = new GImage(imageFileName);
-						currentProfile.setImage(image);
+						currentProfile.setImageFileName(imageFileName);
 						canvas.displayProfile(currentProfile);
 						canvas.showMessage("Picture updated");
 						
@@ -241,7 +241,7 @@ public class FacePamphlet extends Program
 				in.close();
 				fileIn.close();
 				
-				canvas.showMessage("Database was loaded " + databaseFile);
+				canvas.showMessage("Database was loaded from " + databaseFile);
 				
 			} catch (IOException ex) {
 				canvas.showMessage("Database file was not found");

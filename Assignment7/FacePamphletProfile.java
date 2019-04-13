@@ -9,6 +9,8 @@
  */
 
 import acm.graphics.*;
+import acm.util.ErrorException;
+
 import java.util.*;
 
 public class FacePamphletProfile implements FacePamphletConstants, java.io.Serializable{
@@ -16,8 +18,7 @@ public class FacePamphletProfile implements FacePamphletConstants, java.io.Seria
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private String status;
-	private String imageName;
-	private transient GImage profilePicture;
+	private String imageFileName;
 	private ArrayList<String> friendList; 
 	
 	/** 
@@ -42,12 +43,20 @@ public class FacePamphletProfile implements FacePamphletConstants, java.io.Seria
 	 * If there is no image associated with the profile, the method
 	 * returns null. */ 
 	public GImage getImage() {
-		return profilePicture;
+		try {
+			return new GImage(imageFileName);
+		} catch (ErrorException ex) {
+			return null;
+		}
+		
 	}
-
-	/** This method sets the image associated with the profile. */ 
-	public void setImage(GImage image) {
-		profilePicture = image;
+	
+	public void setImageFileName(String imageFileName) {
+		this.imageFileName = imageFileName;
+	}
+	
+	public String getImageFileName() {
+		return imageFileName;
 	}
 	
 	/** 
