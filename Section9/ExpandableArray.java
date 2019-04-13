@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
 * This class provides methods for working with an array that expands
 * to include any positive index value supplied by the caller.
@@ -50,13 +52,17 @@ public class ExpandableArray {
 		return array.length;
 	}
 	
+	public String toString() {
+		return Arrays.toString(array);
+	}
+	
 	public static void main(String[] args) {
 		ExpandableArray myList = new ExpandableArray();
+		myList.set(3, "Jerry");
 		myList.set(14, "Bob");
 		myList.set(21, "Sally");
 		
-		for(int i = 0; i < myList.size(); i++) {
-			System.out.println((String)myList.get(i));
-		}
+		System.out.println(myList.toString());
+
 	}
 }
