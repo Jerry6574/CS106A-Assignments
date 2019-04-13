@@ -8,8 +8,10 @@
 
 import java.util.*;
 
-public class FacePamphletDatabase implements FacePamphletConstants {
+public class FacePamphletDatabase implements FacePamphletConstants, java.io.Serializable{
 	
+
+	private static final long serialVersionUID = 1L;
 	private HashMap<String, FacePamphletProfile> database;
 	
 	/** 

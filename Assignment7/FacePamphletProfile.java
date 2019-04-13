@@ -11,10 +11,13 @@
 import acm.graphics.*;
 import java.util.*;
 
-public class FacePamphletProfile implements FacePamphletConstants {
+public class FacePamphletProfile implements FacePamphletConstants, java.io.Serializable{
+
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String status;
-	private GImage profilePicture;
+	private String imageName;
+	private transient GImage profilePicture;
 	private ArrayList<String> friendList; 
 	
 	/** 

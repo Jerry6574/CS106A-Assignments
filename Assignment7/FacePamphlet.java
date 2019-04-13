@@ -9,7 +9,11 @@ import acm.program.*;
 import acm.graphics.*;
 import acm.util.*;
 import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.*;
 
@@ -23,6 +27,11 @@ public class FacePamphlet extends Program
 	private JButton addButton;
 	private JButton deleteButton;
 	private JButton lookUpButton;
+	
+	private JTextField databaseFileTF;
+	private JButton saveButton;
+	private JButton loadButton;
+	
 	private JButton changeStatusButton;
 	private JButton changePictureButton;
 	private JButton addFriendButton;
@@ -50,12 +59,20 @@ public class FacePamphlet extends Program
 		deleteButton = new JButton("Delete");
 		lookUpButton = new JButton("Lookup");
 		
+		databaseFileTF = new JTextField(TEXT_FIELD_SIZE);
+		saveButton = new JButton("Save Database");
+		loadButton = new JButton("Load Database");		
+		
 		add(canvas);
 		add(nameLabel, NORTH);
 		add(nameTF, NORTH);
 		add(addButton, NORTH);
 		add(deleteButton, NORTH);
 		add(lookUpButton, NORTH);
+		
+		add(databaseFileTF, EAST);
+		add(saveButton, EAST);
+		add(loadButton, EAST);
 		
 		changeStatusTF = new JTextField(TEXT_FIELD_SIZE);
 		changeStatusTF.addActionListener(this);
@@ -92,11 +109,11 @@ public class FacePamphlet extends Program
      * clicked or interactors are used, so you will have to add code
      * to respond to these actions.
      */
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
     	String name = nameTF.getText();
     	
     	// add profile
-		if(e.getSource() == addButton) {
+		if(event.getSource() == addButton) {
 			// name is blank, do nothing
 			if(!name.equals("")) {
 				// profile exists
@@ -116,7 +133,7 @@ public class FacePamphlet extends Program
 			}
 		
 		// delete profile
-		} else if(e.getSource() == deleteButton) {
+		} else if(event.getSource() == deleteButton) {
 			if(!name.equals("")) {
 				canvas.removeAll();
 				
@@ -131,7 +148,7 @@ public class FacePamphlet extends Program
 			println("Profile of " + name + " deleted");
 		
 		// lookup profile
-		} else if(e.getSource() == lookUpButton) {
+		} else if(event.getSource() == lookUpButton) {
 			if(!name.equals("")) {
 				if(database.containsProfile(name)) {
 					FacePamphletProfile profile = database.getProfile(name);
@@ -147,7 +164,7 @@ public class FacePamphlet extends Program
 			}
 		
 		// change status
-		} else if(e.getSource() == changeStatusButton || (e.getSource() == changeStatusTF && e.getActionCommand().equals("Go"))) {
+		} else if(event.getSource() == changeStatusButton || (event.getSource() == changeStatusTF && event.getActionCommand().equals("Go"))) {
 			String status = changeStatusTF.getText();
 			if(!status.equals("")) {
 				if(currentProfile != null) {
@@ -161,7 +178,7 @@ public class FacePamphlet extends Program
 			}
 		
 		// change picture
-		} else if(e.getSource() == changePictureButton || (e.getSource() == changePictureTF) && e.getActionCommand().equals("Go")) {
+		} else if(event.getSource() == changePictureButton || (event.getSource() == changePictureTF) && event.getActionCommand().equals("Go")) {
 			String imageFileName = changePictureTF.getText();
 			GImage image = null;
 			if(!imageFileName.equals("")) {
@@ -182,7 +199,7 @@ public class FacePamphlet extends Program
 			}
 		
 		// add friend
-		} else if(e.getSource() ==  addFriendButton || (e.getSource() == addFriendTF && e.getActionCommand().equals("Go"))) {
+		} else if(event.getSource() == addFriendButton || (event.getSource() == addFriendTF && event.getActionCommand().equals("Go"))) {
 			String friend = addFriendTF.getText();
 			
 			if(!friend.equals("")) {
@@ -214,7 +231,43 @@ public class FacePamphlet extends Program
 				}
 				
 			}
-		} 
+		} else if(event.getSource() == loadButton) {
+			String databaseFile = databaseFileTF.getText();
+			
+			try {
+				FileInputStream fileIn = new FileInputStream(databaseFile);
+				ObjectInputStream in = new ObjectInputStream(fileIn);
+				database = (FacePamphletDatabase) in.readObject();
+				in.close();
+				fileIn.close();
+				
+				canvas.showMessage("Database was loaded " + databaseFile);
+				
+			} catch (IOException ex) {
+				canvas.showMessage("Database file was not found");
+				ex.printStackTrace();
+			} catch (ClassNotFoundException ex) {
+				canvas.showMessage("FacePamphletDatabase class was not found");
+			}
+			
+		} else if(event.getSource() == saveButton) {
+			String databaseFile = databaseFileTF.getText();
+			
+			try {
+				FileOutputStream fileOut = new FileOutputStream(databaseFile);
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+				out.writeObject(database);
+				out.close();
+				fileOut.close();
+				
+				canvas.showMessage("Database was saved at " + databaseFile);
+				
+			} catch (IOException ex) {
+				canvas.showMessage("Database file is not valid");
+				ex.printStackTrace();
+			}
+			
+		}
 	}
 
 }
